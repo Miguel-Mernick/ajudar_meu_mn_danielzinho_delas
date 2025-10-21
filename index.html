@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pergunta Importante 💞</title>
+  <style>
+    body {
+      background-color: #222;
+      color: white;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      transition: background-color 1s ease, color 1s ease;
+    }
+    h1 {
+      margin-top: 50px;
+      font-size: 1.8em;
+      transition: color 1s ease;
+    }
+    .buttons {
+      margin-top: 40px;
+    }
+    button {
+      font-size: 18px;
+      font-weight: bold;
+      padding: 10px 30px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin: 10px;
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+    button:hover {
+      transform: scale(1.1);
+    }
+    .sim {
+      background-color: #ff69b4;
+      color: white;
+      box-shadow: 0 0 20px #ff9ac6;
+    }
+    .nao {
+      background-color: #555;
+      color: white;
+    }
+    .heart {
+      position: absolute;
+      font-size: 24px;
+      animation: subir 2s linear forwards;
+    }
+    @keyframes subir {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-200px); }
+    }
+    .mensagem {
+      margin-top: 30px;
+      font-size: 22px;
+      color: pink;
+    }
+    .texto-terminal {
+      font-family: "Courier New", monospace;
+      white-space: pre-line;
+      color: white;
+      margin-top: 20px;
+    }
+
+    /* 💢 MODO RAIVA */
+    .modo-raiva {
+      background-color: #440000;
+      color: #ff4444;
+      animation: tremer 0.2s infinite;
+    }
+
+    @keyframes tremer {
+      0% { transform: translate(0px, 0px); }
+      25% { transform: translate(-2px, 2px); }
+      50% { transform: translate(2px, -2px); }
+      75% { transform: translate(-2px, -1px); }
+      100% { transform: translate(1px, 2px); }
+    }
+
+    /* 💖 MODO AMOR */
+    .modo-amor {
+      background: radial-gradient(circle at center, #ff9ac6 0%, #ff69b4 40%, #a83279 100%);
+      color: white;
+      animation: brilhar 3s infinite alternate;
+    }
+
+    @keyframes brilhar {
+      from { box-shadow: 0 0 30px #ff8ac1; }
+      to { box-shadow: 0 0 60px #ffb6d9; }
+    }
+
+    /* 😢 MODO TRISTE */
+    .modo-triste {
+      background: linear-gradient(#222, #000);
+      color: #a0a0ff;
+      animation: chuvaFundo 2s infinite linear;
+    }
+
+    /* 💧 LÁGRIMAS */
+    .lagrima {
+      position: absolute;
+      top: -10px;
+      color: #00bfff;
+      font-size: 20px;
+      opacity: 0.8;
+      animation: cair 2s linear forwards;
+    }
+
+    @keyframes cair {
+      from { transform: translateY(0); opacity: 0.8; }
+      to { transform: translateY(600px); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <h1>💘 QUER SER MINHA NAMORADA? 💘</h1>
+
+  <div class="buttons">
+    <button class="sim" onclick="clicouSim()">SIM 💖</button>
+    <button class="nao" onclick="clicouNao()">NÃO 😅</button>
+  </div>
+
+  <div id="mensagem"></div>
+
+  <script>
+    function clicouSim() {
+      const msg = document.getElementById("mensagem");
+      document.body.classList.add("modo-amor");
+      document.body.classList.remove("modo-raiva", "modo-triste");
+      msg.innerHTML = "<div class='mensagem'>💘 Você disse SIM! 💘</div>";
+      criarAnimacaoCoracoes();
+    }
+
+    function clicouNao() {
+      const msg = document.getElementById("mensagem");
+      document.body.classList.add("modo-raiva");
+      document.body.classList.remove("modo-amor", "modo-triste");
+      msg.innerHTML = "<div class='mensagem' style='color:red;'>💔 Você disse NÃO... 💔</div>";
+      setTimeout(() => animacaoNao(msg), 1500);
+    }
+
+    function criarAnimacaoCoracoes() {
+      for (let i = 0; i < 20; i++) {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.textContent = "💖";
+        heart.style.left = Math.random() * window.innerWidth + "px";
+        heart.style.top = "400px";
+        heart.style.animationDuration = (1.5 + Math.random()) + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 2000);
+      }
+      setTimeout(() => {
+        document.getElementById("mensagem").innerHTML += "<div class='mensagem'>Você me fez o mais feliz do mundo! 💞</div>";
+      }, 2500);
+    }
+
+    function animacaoNao(container) {
+      const texto = document.createElement("div");
+      texto.classList.add("texto-terminal");
+      container.appendChild(texto);
+
+      texto.textContent = "Te excluindo da minha vida... 💔";
+
+      setTimeout(() => {
+        texto.textContent = "Excluindo System32... 😈";
+
+        setTimeout(() => {
+          iniciarAnimacaoArquivos(texto);
+        }, 2000);
+      }, );
+    }
+
+    function iniciarAnimacaoArquivos(texto) {
+      const mensagens = [
+        "⚠️ Iniciando modo RAIVA suprema...",
+        "[1/6] Removendo arquivos de carinho...",
+        "[2/6] Queimando lembranças doces...",
+        "[3/6] Apagando mensagens fofas...",
+        "[4/6] Reiniciando frieza emocional...",
+        "[5/6] Instalando modo indiferente...",
+        "[6/6] Concluído 💢",
+        "😠 Sistema operacional: coração OFFLINE 💔"
+      ];
+
+      let i = 0;
+
+      const intervalo = setInterval(() => {
+        texto.textContent = mensagens[i];
+        i++;
+        if (i === mensagens.length) {
+          clearInterval(intervalo);
+
+          setTimeout(() => {
+            // Muda para o modo triste
+            document.body.classList.remove("modo-raiva");
+            document.body.classList.add("modo-triste");
+
+            texto.textContent = "😅 Brincadeirinha... mas ainda doeu 😭";
+            iniciarLagrimas();
+          }, 2500);
+        }
+      }, 2500);
+    }
+
+    function iniciarLagrimas() {
+      setInterval(() => {
+        const lagrima = document.createElement("div");
+        lagrima.classList.add("lagrima");
+        lagrima.textContent = "💧";
+        lagrima.style.left = Math.random() * window.innerWidth + "px";
+        document.body.appendChild(lagrima);
+        setTimeout(() => lagrima.remove(), 2000);
+      }, 150);
+    }
+  </script>
+</body>
+</html>
