@@ -125,95 +125,169 @@
   <div id="mensagem"></div>
 
   <script>
+    // Gerenciamento de timers/intervals para evitar acúmulo quando o usuário clica várias vezes
+    let heartTimeouts = [];
+    let tearInterval = null;
+    let fileAnimInterval = null;
+
+    const simBtn = document.querySelector('.sim');
+    const naoBtn = document.querySelector('.nao');
+    const mensagemDiv = document.getElementById('mensagem');
+
+    // Acessibilidade: informe mudanças de estado para leitores de tela
+    mensagemDiv.setAttribute('aria-live', 'polite');
+
+    function disableButtons() {
+      simBtn.disabled = true;
+      naoBtn.disabled = true;
+    }
+
+    function enableButtons() {
+      simBtn.disabled = false;
+      naoBtn.disabled = false;
+    }
+
+    function limparAnimacoes() {
+      // remove corações
+      heartTimeouts.forEach(id => clearTimeout(id));
+      heartTimeouts = [];
+      document.querySelectorAll('.heart').forEach(h => h.remove());
+
+      // limpa lágrimas
+      if (tearInterval) {
+        clearInterval(tearInterval);
+        tearInterval = null;
+      }
+      document.querySelectorAll('.lagrima').forEach(l => l.remove());
+
+      // limpa animação de arquivos
+      if (fileAnimInterval) {
+        clearInterval(fileAnimInterval);
+        fileAnimInterval = null;
+      }
+    }
+
+    function resetEstado() {
+      limparAnimacoes();
+      document.body.classList.remove('modo-amor', 'modo-raiva', 'modo-triste');
+      mensagemDiv.innerHTML = '';
+      enableButtons();
+    }
+
+    // atalhos de teclado: S/Y = SIM, N = NÃO, Esc = reset/sair
+    document.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 's' || e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        clicouSim();
+      } else if (e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        clicouNao();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        resetEstado();
+      }
+    });
+
     function clicouSim() {
-      const msg = document.getElementById("mensagem");
-      document.body.classList.add("modo-amor");
-      document.body.classList.remove("modo-raiva", "modo-triste");
-      msg.innerHTML = "<div class='mensagem'>💘 Você disse SIM! 💘</div>";
-      criarAnimacaoCoracoes();
+      limparAnimacoes();
+      disableButtons();
+      document.body.classList.add('modo-amor');
+      document.body.classList.remove('modo-raiva', 'modo-triste');
+      mensagemDiv.innerHTML = "<div class='mensagem'>💘 Você disse SIM! 💘</div>";
+      criarAnimacaoCoracoes(() => enableButtons());
     }
 
     function clicouNao() {
-      const msg = document.getElementById("mensagem");
-      document.body.classList.add("modo-raiva");
-      document.body.classList.remove("modo-amor", "modo-triste");
-      msg.innerHTML = "<div class='mensagem' style='color:red;'>💔 Você disse NÃO... 💔</div>";
-      setTimeout(() => animacaoNao(msg), 1500);
+      limparAnimacoes();
+      disableButtons();
+      document.body.classList.add('modo-raiva');
+      document.body.classList.remove('modo-amor', 'modo-triste');
+      mensagemDiv.innerHTML = "<div class='mensagem' style='color:red;'>💔 Você disse NÃO... 💔</div>";
+      setTimeout(() => animacaoNao(mensagemDiv), 1200);
     }
 
-    function criarAnimacaoCoracoes() {
-      for (let i = 0; i < 20; i++) {
-        const heart = document.createElement("div");
-        heart.classList.add("heart");
-        heart.textContent = "💖";
-        heart.style.left = Math.random() * window.innerWidth + "px";
-        heart.style.top = "400px";
-        heart.style.animationDuration = (1.5 + Math.random()) + "s";
+    function criarAnimacaoCoracoes(done) {
+      const total = 20;
+      for (let i = 0; i < total; i++) {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.textContent = '💖';
+        heart.style.left = Math.random() * (window.innerWidth - 40) + 'px';
+        // iniciar próximo à base da janela para subir
+        heart.style.top = (window.innerHeight - 120) + 'px';
+        heart.style.animationDuration = (1.5 + Math.random()) + 's';
         document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 2000);
+        const timeoutId = setTimeout(() => heart.remove(), 2200);
+        heartTimeouts.push(timeoutId);
       }
-      setTimeout(() => {
-        document.getElementById("mensagem").innerHTML += "<div class='mensagem'>Você me fez o mais feliz do mundo! 💞</div>";
+      // Mensagem final após animação
+      const finalId = setTimeout(() => {
+        mensagemDiv.innerHTML += "<div class='mensagem'>Você me fez o mais feliz do mundo! 💞</div>";
+        if (typeof done === 'function') done();
       }, 2500);
+      heartTimeouts.push(finalId);
     }
 
     function animacaoNao(container) {
-      const texto = document.createElement("div");
-      texto.classList.add("texto-terminal");
+      const texto = document.createElement('div');
+      texto.classList.add('texto-terminal');
       container.appendChild(texto);
 
-      texto.textContent = "Te excluindo da minha vida... 💔";
+      texto.textContent = 'Te excluindo da minha vida... 💔';
 
       setTimeout(() => {
-        texto.textContent = "Excluindo System32... 😈";
+        // texto divertido, não perigoso
+        texto.textContent = 'Excluindo System32... 😈';
 
         setTimeout(() => {
           iniciarAnimacaoArquivos(texto);
-        }, 2000);
-      }, );
+        }, 1200);
+      }, 800);
     }
 
     function iniciarAnimacaoArquivos(texto) {
       const mensagens = [
-        "⚠️ Iniciando modo RAIVA suprema...",
-        "[1/6] Removendo arquivos de carinho...",
-        "[2/6] Queimando lembranças doces...",
-        "[3/6] Apagando mensagens fofas...",
-        "[4/6] Reiniciando frieza emocional...",
-        "[5/6] Instalando modo indiferente...",
-        "[6/6] Concluído 💢",
-        "😠 Sistema operacional: coração OFFLINE 💔"
+        '⚠️ Iniciando modo RAIVA suprema...',
+        '[1/6] Removendo arquivos de carinho...',
+        '[2/6] Queimando lembranças doces...',
+        '[3/6] Apagando mensagens fofas...',
+        '[4/6] Reiniciando frieza emocional...',
+        '[5/6] Instalando modo indiferente...',
+        '[6/6] Concluído 💢',
+        '😠 Estado final: coração OFFLINE 💔'
       ];
 
       let i = 0;
 
-      const intervalo = setInterval(() => {
-        texto.textContent = mensagens[i];
+      fileAnimInterval = setInterval(() => {
+        texto.textContent = mensagens[i] || '';
         i++;
-        if (i === mensagens.length) {
-          clearInterval(intervalo);
-
+        if (i >= mensagens.length) {
+          clearInterval(fileAnimInterval);
+          fileAnimInterval = null;
           setTimeout(() => {
-            // Muda para o modo triste
-            document.body.classList.remove("modo-raiva");
-            document.body.classList.add("modo-triste");
-
-            texto.textContent = "😅 Brincadeirinha... mas ainda doeu 😭";
+            document.body.classList.remove('modo-raiva');
+            document.body.classList.add('modo-triste');
+            texto.textContent = '😅 Brincadeirinha... mas ainda doeu 😭';
             iniciarLagrimas();
-          }, 2500);
+            // reabilita botões depois da sequência
+            setTimeout(() => enableButtons(), 1500);
+          }, 1200);
         }
-      }, 2500);
+      }, 1100);
     }
 
     function iniciarLagrimas() {
-      setInterval(() => {
-        const lagrima = document.createElement("div");
-        lagrima.classList.add("lagrima");
-        lagrima.textContent = "💧";
-        lagrima.style.left = Math.random() * window.innerWidth + "px";
+      if (tearInterval) clearInterval(tearInterval);
+      tearInterval = setInterval(() => {
+        const lagrima = document.createElement('div');
+        lagrima.classList.add('lagrima');
+        lagrima.textContent = '💧';
+        lagrima.style.left = Math.random() * (window.innerWidth - 20) + 'px';
+        lagrima.style.top = '-10px';
         document.body.appendChild(lagrima);
-        setTimeout(() => lagrima.remove(), 2000);
-      }, 150);
+        setTimeout(() => lagrima.remove(), 2200);
+      }, 400);
     }
   </script>
 </body>
